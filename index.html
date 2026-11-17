@@ -14,8 +14,8 @@
 <main id="app"></main><footer>Bangkok Budget Challenge · Fictional characters · All amounts in Thai baht</footer>
 <dialog id="guide"><form method="dialog"><button>Close</button></form><h2>Teacher guide</h2>
 <p><b>2 minutes to start.</b> Open the game, pick a character and read January’s payday screen. Students can play alone or share one device. Their goal is to get through 12 months and finish with cash, savings and a good life score.</p>
-<p><b>About 86 minutes of play.</b> Aim for about seven minutes per month. Each month has six decisions, a payday and a choice about savings. Put June on the board when the class reaches it so they can compare borrowers with renters. Teams that finish early can replay a different character or compare their biggest surprise bills using the score table.</p>
-<p><b>2 minutes to compare.</b> Ask two teams to call out annual score, savings, stress and how many months they spent in overdraft. Ask one team what changed after the interest rate rose.</p>
+<p><b>About 86 minutes of play.</b> Aim for about seven minutes per month. Each month has six decisions, a payday and a choice about savings. Put June on the board when the class reaches it so they can compare borrowers with renters. In September a national flood cuts wages or drains savings, depending on the character. Teams that finish early can replay a different character or compare their biggest surprise bills using the score table.</p>
+<p><b>2 minutes to compare.</b> Ask two teams to call out annual score, savings, stress and how many months they spent in overdraft. Ask whether the September flood cost them wages or savings, and how they covered the shortfall.</p>
 <p>The final score gives up to 40 for savings, 40 for life points and 20 for a cash buffer after December’s unpaid commitments. Each month closed in overdraft costs two points. A final shortfall costs another ten. The year is fictional. For the simulation the central bank’s one percentage point increase passes through in full to the variable mortgages. Actual bank rates and repayment terms differ. Car loans use fixed payments and a simple reducing-balance model. <a href="https://www.bot.or.th/th/research-and-publications/articles-and-publications/bot-magazine-issues/phrasiam-68-3/the-knowledge-low-rate-interest.html">Bank of Thailand explanation of floating-rate debt</a>.</p>
 <details><summary>Salary and budget sources</summary><p>We use rounded fictional take-home pay informed by employer postings. Listed pay and take-home pay can differ. Each cost is a scenario assumption. For example, weekly food of ฿1,150–฿1,550 is about ฿55–฿74 per meal for three meals a day, including home meals. The hotel receptionist, motorbike mechanic and graphic designer use fictional take-home pay examples, with <a href="https://th.jobsdb.com/career-advice/role/graphic-designer/salary/in-bangkok">Bangkok graphic designer listings</a> as an additional reference. Travel combines trips by bus, train or on foot. Fixed bills are charged once, and the four weekly costs cover meals, travel and household basics.</p><ul><li><a href="https://th.jobsdb.com/salary-of-registered-nurse-jobs/in-Bangkok-Metropolitan-Region">Employer listings for Bangkok nurses</a> (example ฿24,000–฿28,000).</li><li><a href="https://th.jobsdb.com/american-school-jobs">Employer listings for school staff</a> (Thai-language teacher example ฿25,000–฿28,000).</li><li><a href="https://th.jobsdb.com/career-advice/role/architect/salary/in-bangkok">Bangkok architect pay from employer postings</a>.</li><li><a href="https://www.renthub.in.th/en/apartment/on-nut-market">On Nut area asking rents</a> and <a href="https://btsapp-test.bts.co.th/WebSite/files/uploads/tickets/pdf/fare_matrix_Eff.1Nov25_Adult.pdf">BTS adult fare matrix</a>.</li></ul></details></dialog>
 <script>
@@ -343,6 +343,24 @@ const workLater = [
  scene('Close out a project','You can earn extra by closing out a job before the year ends.',
  ['Stay late for the full bonus',1900,-1,-2,-1,2],['Do a smaller part',730,0,-1,0,1],['Leave on time',0,1,2,1,-1])
 ];
+const floodImpacts = [
+ {lostPay:6250, story:'Floodwater cuts the route to Mali’s clinic for a week. The clinic does not pay her for the shifts she misses.', points:[-1,0,0,2]},
+ {repair:10500, story:'Water reaches Ton’s ground-floor flat and ruins his own laptop and furniture. His school keeps paying him while it closes.', points:[-2,0,0,3]},
+ {repair:22000, story:'Floodwater damages the electrics and flooring in Pim’s home. Her salary continues. Her mortgage and car payments are still due.', points:[-2,0,0,3]},
+ {lostPay:4875, story:'The flooded road to Dao’s hotel closes for a week. She misses a full week of paid shifts.', points:[-1,0,0,2]},
+ {lostPay:5625, story:'Krit’s workshop closes for a week while the water drains. He is paid for the hours he works, so he loses a week of wages.', points:[-1,0,0,2]},
+ {repair:16500, story:'Floodwater damages Nok’s home wiring and work equipment. Her salary continues, and the repair bill must be paid this month.', points:[-2,0,0,3]}
+];
+const floodChoices = {
+ lostPay:scene('Your first week back','Work has reopened. Your lost wages are already shown on September’s bank statement. Decide what to do now.',
+  ['Take extra paid hours',1500,-1,-2,-1,2],
+  ['Take one extra shift and rest the next day',650,0,0,0,1],
+  ['Work your normal hours and help at home',0,1,2,1,-1]),
+ repair:scene('After the water goes down','The urgent repairs are already paid. You still need somewhere to work or rest while the repairs finish.',
+  ['Pay for two nights near work',-1450,1,0,2,-2],
+  ['Stay with relatives and help with food',-430,1,2,0,-1],
+  ['Use free space at work and stay with a friend',0,0,-1,0,1])
+};
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const mortgage = (balance, term) => ({name:'Home mortgage',balance,term,rate:5.25,variable:true});
 const carLoan = (balance, term) => ({name:'Car loan',balance,term,rate:6,variable:false});
@@ -387,6 +405,29 @@ function start(id){
   s={id,month:0,part:0,stage:'intro',cash:0,savings:0,points:[0,0,0,0],later:0,ledger:[],decisions:[],history:[],loans:personalLoans[id].map(l=>({...l,scheduled:payment(l.balance,l.rate,l.term)})),overdraftMonths:0};
   view='game';
 }
+function applyFlood(){
+  const impact=floodImpacts[s.id];
+  const fromSavings=Math.min(s.savings,impact.repair||0);
+  s.flood={fromSavings};
+  if(impact.lostPay){
+    log('Flood: one week of unpaid work',-impact.lostPay);
+  }else{
+    if(fromSavings){
+      s.savings-=fromSavings;
+      log('Savings used for urgent flood repairs',fromSavings);
+    }
+    log('Flood: urgent repair bill',-impact.repair);
+  }
+  addPoints(impact.points);
+  s.decisions.push({month:s.month,label:'National flood impact',cash:-(impact.lostPay||impact.repair),points:impact.points});
+}
+function floodAlert(){
+  if(s.month!==9||!s.flood)return '';
+  const impact=floodImpacts[s.id];
+  const detail=impact.lostPay?'Lost wages: '+fmt(impact.lostPay)+' for one week.':
+    'Urgent repairs: '+fmt(impact.repair)+'. Paid from savings: '+fmt(s.flood.fromSavings)+'. Charged to bank cash: '+fmt(impact.repair-s.flood.fromSavings)+'.';
+  return '<div class="feedback alert"><b>🌧️ Breaking news · Major floods across Thailand</b><br>It’s a national disaster. Roads and workplaces close, and homes are damaged. Rent and loan bills are still due in this scenario.<p>'+impact.story+'</p><b>'+detail+'</b><br>'+pointsText(impact.points)+'</div>';
+}
 function beginMonth(){
   const p=people[s.id];
   s.month++;
@@ -420,6 +461,7 @@ function beginMonth(){
     log(l.name+' payment',-amount);
   }
   if(due)log('Bills from earlier choices',due);
+  if(s.month===9)applyFlood();
   if(opening<0){
     const charge=Math.ceil(-opening*(s.month>=6?.02:.015));
     log('Overdraft interest',-charge);
@@ -430,6 +472,7 @@ function beginMonth(){
 }
 function currentScene(){
   const p=people[s.id], i=s.month-1;
+  if(s.month===9&&s.flood&&s.part===0)return floodImpacts[s.id].lostPay?floodChoices.lostPay:floodChoices.repair;
   if(s.part===0) return i<4?p.events[i]:workLater[i-4];
   if(s.part===5) return i===1&&s.id===3?daoBirthday:seasonal[i]||lifeEvents[i];
   return year[i][s.part-1];
@@ -467,7 +510,7 @@ function game(){
   }
   if(s.stage==='payday'){
     const news=s.month===6?'<div class="feedback alert"><b>Breaking news · Bank of Thailand raises rates</b><br>The fictional policy rate rises from 1.50% to 2.50%. In this game, your bank passes on the full increase to variable mortgages. Fixed car payments stay the same. Overdraft interest rises from 1.5% to 2% per month.'+(s.rateChanges.length?'<br><b>Your mortgage payment rose from '+fmt(s.rateChanges[0].before)+' to '+fmt(s.rateChanges[0].after)+' this month.</b>':'<br>You do not have a variable mortgage, so this change does not raise your regular housing payment.')+'</div>':s.month===7?'<div class="feedback alert"><b>Prices rise</b><br>Food and travel now cost ฿360 more per month for the rest of the year.</div>':'';
-    body='<h3>'+months[s.month-1]+' payday</h3>'+news+statement(s.ledger.filter(l=>l.month===s.month))+'<div class="actions">'+button('Make decision 1','decide','primary')+'</div>';
+    body='<h3>'+months[s.month-1]+' payday</h3>'+news+floodAlert()+statement(s.ledger.filter(l=>l.month===s.month))+'<div class="actions">'+button('Make decision 1','decide','primary')+'</div>';
   }
   if(s.stage==='choice'){
     body='<span class="tag">'+months[s.month-1]+' · Decision '+(s.part+1)+' of 6</span><h3>'+e.emoji+' '+e.title+'</h3><p>'+e.story+'</p>'+e.choices.map((c,i)=>'<button class="option" data-act="pick:'+i+'">'+c.label.replaceAll('next week','next month')+'<span>'+change(c.cash)+' now'+(c.later?' · '+fmt(-c.later)+' due next month':'')+'</span></button>').join('');
