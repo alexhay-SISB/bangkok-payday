@@ -196,12 +196,12 @@ input,select{background:#1b142c;border:1px solid #8b71a1;color:#fff1d4;font-size
 @media(max-width:600px){.shell{width:94%}.mast .shell{min-height:70px}.kpis{grid-template-columns:repeat(2,1fr)}.kpi strong{font-size:25px}.grid,[data-phase="0"] .panel .grid{grid-template-columns:1fr}.panel{padding:16px}.rail button{font-size:10px}.world-top{display:block}.world-actions{margin-top:10px}.card-art{height:155px}}
 @media(prefers-reduced-motion:reduce){.card{animation:none;transition:none}}
 </style>
-</head>
+<style>.ok p{color:#254634}.ok button{margin-top:8px}</style></head>
 <body>
 <header class="mast"><div class="shell"><div class="wordmark"><span class="mark" aria-hidden="true"></span><h1>SISB Fest Stratagem</h1></div><div class="tools"><button data-ui="map">Campus map</button><button data-ui="help">How to play</button><button data-ui="reset">Restart</button></div></div></header>
 <main class="shell"><div id="app"></div></main>
 <dialog id="map"><form method="dialog"><button>Close map</button></form><h2>Official 2025 event map</h2><p>Use the school’s map to orient your team. Gate 5 at Mugs and Hugs is the published access point. Simulator zones, limits and timings are planning assumptions.</p><a id="maplink" target="_blank" rel="noopener"><img id="mapimage" alt="Official SISB Fest 2025 campus event map"></a><p><a href="https://sites.google.com/sisbschool.com/sisbfest/about-sisb-fest/2025" target="_blank" rel="noopener">Open the school's map and archive</a></p></dialog>
-<dialog id="help"><form method="dialog"><button>Close guide</button></form><h2>Run the festival</h2><p>Play in teams. Decide who runs Finance, Programme and Operations. Discuss each phase, then lock it in. You begin with ฿1.8 million in working capital. For a win, admit 3,001 or more people, finish safely and raise at least ฿100,000 for charity after covering your costs.</p><p>Allow roughly 5 min to start, 12 min for bids, 13 min for scheduling, 13 min for stalls and sponsorship, 11 min for ticketing, 13 min for staffing, 15 min for live decisions and 8 min for debrief. Ask teams to defend one safety decision and explain which expense or sponsor made the biggest difference.</p><p>Real artist names and releases are used as classroom examples. Bids, availability, sponsors, costs, capacities and audience figures are fictional. The attendance goal measures total entries across two sessions, while operating limits apply at any one time.</p>
+<dialog id="help"><form method="dialog"><button>Close guide</button></form><h2>Run the festival</h2><p>Play in teams. Decide who runs Finance, Programme and Operations. Discuss each phase, then lock it in. You begin with ฿3.5 million in working capital, with an optional ฿1 million loan facility charging an 8% event fee. For a win, admit 3,001 or more people, finish safely and raise at least ฿100,000 for charity after covering your costs.</p><p>Allow roughly 5 min to start, 12 min for bids, 13 min for scheduling, 13 min for stalls and sponsorship, 11 min for ticketing, 13 min for staffing, 15 min for live decisions and 8 min for debrief. Ask teams to defend one safety decision and explain which expense or sponsor made the biggest difference.</p><p>Real artist names and releases are used as classroom examples. Bids, availability, sponsors, costs, capacities and audience figures are fictional. The attendance goal measures total entries across two sessions, while operating limits apply at any one time.</p>
 <ul><li><a href="https://sites.google.com/sisbschool.com/sisbfest/home">SISB Fest home</a>, <a href="https://sites.google.com/sisbschool.com/sisbfest/about-sisb-fest/2025">2025 event and map</a>, <a href="https://sites.google.com/sisbschool.com/sisbfest/location">campus access at Gate 5</a></li>
 <li><a href="https://www.hse.gov.uk/event-safety/crowd-management-assess.htm">Crowd risk and safe capacity</a>, <a href="https://www.hse.gov.uk/event-safety/incidents-and-emergencies.htm">incident and emergency planning</a>, <a href="https://www.food.gov.uk/safety-hygiene/providing-food-at-community-and-charity-events">food hygiene and allergens at community events</a>. These are design references for the simulator.</li>
 <li><a href="https://www.tillybirds.com/discography">Tilly Birds</a>, <a href="https://music.apple.com/us/album/my-chainz-single/1894976005">4EVE</a>, <a href="https://www.starship-ent.com/newrelease">IVE and CRAVITY</a>, <a href="https://straykids.jype.com/Mobile/DiscographyView?AamSeq=280">Stray Kids</a></li><li><a href="https://www.ichitangroup.com/en/products-and-brands">Ichitan product portfolio</a>, <a href="https://www.investor.afteryoudessertcafe.com/en/home">After You</a>, <a href="https://shoponline.taokaenoi.co.th/index.php?controller=category&amp;id_category=22&amp;id_lang=1">Tao Kae Noi</a>, <a href="https://www.ais.th/about-us/pr-news/zeed-5g-esport">AIS esports</a> and <a href="https://news.xbox.com/en-us/2024/11/06/planet-coaster-2-tips/">Frontier’s Planet Coaster 2 guest-flow and retail guidance</a>. Sponsor deals and offers in the game are fictional.</li></ul></dialog>
@@ -296,7 +296,9 @@ const channels={
 const roles={gate:['Gate scanning & queues',4],main:['Main-stage crowd stewards',6],community:['Community stage & student check-in',3],food:['Food court & handwashing',3],market:['Stalls & sponsor team',3],welfare:['Welfare, lost children & access',3],float:['Break cover & rapid support',2]};
 const ops={medical:['First-aid team',46000],security:['Professional security',69000],tech:['Touring-grade stage, power & sound',175000],weather:['Covered backup and rain plan',78000],radio:['Radios and public announcements',28000],water:['Free water and hygiene checks',23000],access:['Accessible routes and signage',18000]};
 const phases=['Book acts','Schedule','Stalls & sponsors','Sell tickets','Staff & safety','Event day','Results'];
-const capital=1800000;
+const capital=3500000;
+const creditLimit=1000000;
+const financeFee=()=>Math.round((s.loan||0)*.08);
 const tourCost=()=>sum(actsBooked().map(a=>a[5]>=2?55000:0));
 const newGame=()=>({phase:0,programmeVersion:2,seed:Math.floor(Math.random()*1e8),concession:'standard',bids:{},offers:{},booked:{},schedule:{},stalls:{},sponsors:{},channels:{},prices:[180,320,450],split:55,stock:3650,tickets:null,roles:{gate:0,main:0,community:0,food:0,market:0,welfare:0,float:0},ops:{},live:null});
 const concessionPlans={
@@ -343,15 +345,18 @@ const marketing=()=>sum(active('channels').map(k=>channels[k][1]));
 const operations=()=>sum(active('ops').map(k=>ops[k][1]));
 const venue=335000;
 const staffCount=()=>sum(Object.values(s.roles).map(Number));
-const costs=()=>venue+paid()+programmeCost()+marketing()+operations()+tourCost()+concessionPlans[s.concession][3]+(rivalResponses[s.rivalResponse]?.[1]||0);
-const available=()=>capital+stallCash()+sponsorCash()+(s.tickets?.revenue||0)-costs()-(s.live?.extra||0)-(s.live?.refunds||0)-(s.cancellation||0);
+const costs=()=>venue+paid()+programmeCost()+marketing()+operations()+tourCost()+concessionPlans[s.concession][3]+(rivalResponses[s.rivalResponse]?.[1]||0)+financeFee();
+const available=()=>capital+(s.loan||0)+stallCash()+sponsorCash()+(s.tickets?.revenue||0)-costs()-(s.live?.extra||0)-(s.live?.refunds||0)-(s.cancellation||0);
 const actsBooked=()=>acts.filter(a=>isBooked(a[0]));
 const plannedArtist=k=>acts.find(a=>a[0]===k);
 const phaseTitle=title=>'<h2>'+title+'</h2>';
 const toggle=(c,k,label)=>'<button class="'+(checked(c,k)?'selected':'')+'" aria-pressed="'+checked(c,k)+'" data-toggle="'+c+':'+k+'">'+(checked(c,k)?'✓ ':'')+label+'</button>';
 const table=(heads,rows)=>'<div class="table"><table><thead><tr>'+heads.map(x=>'<th scope="col">'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
 const card=(title,info,body)=>'<article class="card"><canvas class="card-art" aria-hidden="true" data-art="'+title.replace(/"/g,'&quot;')+'"></canvas><h3>'+title+'</h3><p>'+info+'</p>'+body+'</article>';
-function cashLine(){return '<p class="muted">Base site hire, sanitation and cleaning '+money(venue)+' · Working cash '+money(available())+'</p>'}
+function cashLine(){
+ const essential=sum(['medical','security','tech','radio','water','access'].filter(k=>!s.ops[k]).map(k=>ops[k][1]));
+ return '<div class="ok"><b>Budget desk</b><p>Starting funds '+money(capital)+' · Spendable cash '+money(available())+'<br>Safety and production still to book '+money(essential)+'<br>Borrowed '+money(s.loan||0)+' · Finance fee '+money(financeFee())+'</p><p>Borrow in ฿250,000 steps, up to ฿1,000,000. The 8% fee reduces your final surplus. Ticket sales, stall rent and sponsor deposits add cash. Keep a reserve for event-day problems.</p>'+(s.phase<5&&((s.loan||0)<creditLimit)?'<button data-borrow>Borrow ฿250,000 (+฿20,000 fee)</button>':'')+'</div>';
+}
 function phaseNav(label,disabled=false){return '<div class="sticky"><div class="actions"><button class="primary" id="next" '+(disabled?'disabled':'')+'>'+label+'</button>'+(s.phase>0?'<button data-back>Back to '+phases[s.phase-1]+'</button>':'')+'</div></div>'}
 function slotFor(key){return s.schedule[key]}
 function stageSlot(value){return value?.split(':')[0]}
@@ -582,7 +587,7 @@ function results(){
  const charity=Math.max(0,surplus), won=count>=3001&&charity>=100000&&!l.stopped;
  const rows=[['Ticket revenue after refunds',money(ticketNet)],['Stall rent',money(stallCash())],['School commission on food and drinks',money(food.share)],['Sponsor income including bonuses',money(sponsorship)],['Charity auction',money(auction)],['Planning costs',money(-costs())],['Artist cancellation fees',money(-cancellation)],['Live response costs',money(-l.extra)],['Net surplus / deficit','<b>'+money(surplus)+'</b>']];
  return phaseTitle(won?'Festival mission achieved':'Festival mission incomplete')+'<div class="'+(won?'ok':'warn')+'"><b>'+num(count)+' admitted · '+money(charity)+' available for charity · '+l.rating+'/100 guest experience</b><br>'+ (l.stopped?'Festival stopped safely because the response budget ran out.':'Attendance target '+(count>=3001?'met':'missed')+' · Charity target '+(charity>=100000?'met':'missed'))+'</div>'+
- '<h3>Food and drink sales</h3><p>'+num(food.units)+' meals / snacks · '+num(food.drinks)+' sponsor drinks · '+money(food.gross)+' vendor sales · '+money(food.share)+' paid to the school.</p><h3>Finance report</h3>'+table(['Item','Amount'],rows)+
+ '<h3>Financing</h3><p>Loan principal '+money(s.loan||0)+' · Event finance fee '+money(financeFee())+' (included in planning costs). Opening funds and loans are repayable funding. The surplus below measures what the event earned after its costs.</p><h3>Food and drink sales</h3><p>'+num(food.units)+' meals / snacks · '+num(food.drinks)+' sponsor drinks · '+money(food.gross)+' vendor sales · '+money(food.share)+' paid to the school.</p><h3>Finance report</h3>'+table(['Item','Amount'],rows)+
  (audit.length?'<h3>Sponsor audit</h3>'+table(['Contract','Total earned','Bonus included','Deposit returned'],audit.map(x=>[x.name,money(x.earned),money(x.bonus),money(x.claw)])):'')+
  '<h3>Incident log</h3>'+table(['Incident','Decision','Cost','Lost admissions','Outcome'],l.log.map(x=>[x.title,x.choice,money(x.cost),x.lost,x.outcome]))+
  '<h3>Debrief</h3><p>Which decision had the biggest effect on charity proceeds? Which two changes would let you admit more people safely? Would you hire the same headliner again?</p><button data-ui="reset">Run another festival</button>';
@@ -599,7 +604,7 @@ function render(){
  const tab=['headline','local','school'][index];
  const current=phase===s.phase&&(phase!==0||tab===(s.bookingTab||'headline'));
  return '<button data-nav="'+index+'" class="'+(current?'on':'')+'" '+(s.phase>=5?'disabled':'')+'><b>'+(index+1)+'</b>'+title+'</button>';
-}).join('')+'</nav><section id="build-drawer" class="panel">'+screens[s.phase]()+'</section></div>';
+}).join('')+'</nav><section id="build-drawer" class="panel">'+(s.phase>0&&s.phase<5?cashLine():'')+screens[s.phase]()+'</section></div>';
  mapShell();
  paintCardArt();
 }
@@ -644,6 +649,7 @@ function next(){
  if(!bookingComplete())return;
 }
  if(s.phase===1&&scheduleIssues().length)return;
+ if(s.phase===2&&(!bookingComplete()||scheduleIssues().length)){s.phase=bookingComplete()?1:0;refresh();return;}
  if(s.phase===2&&(Object.keys(zoneCaps).some(z=>used(z)>zoneCaps[z])||sponsorClash()||active('sponsors').some(k=>!sponsorPitch(k)[0])))return;
  if(s.phase===3){if(!s.rivalSeen||!s.rivalResponse)return;s.tickets=estimateTickets();}
  if(s.phase===4){
@@ -694,10 +700,18 @@ document.addEventListener('click',e=>{
  const b=e.target.closest('button');
  if(!b||b.disabled)return;
  const d=b.dataset;
+ if('borrow' in d){
+  if(s.phase>=5||(s.loan||0)>=creditLimit)return;
+  s.loan=(s.loan||0)+250000;refresh();return;
+ }
  if(d.nav!==undefined){
  const index=Number(d.nav),target=index<3?0:index-2;
  if(s.phase>=5)return;
- if(target>s.phase){if(target===1&&bookingComplete()){s.phase=1;}else return;}
+ if(target>s.phase){
+ if(target===1&&bookingComplete())s.phase=1;
+ else if(target===2)s.phase=2;
+ else return;
+ }
  else s.phase=target;
  if(index<3)s.bookingTab=['headline','local','school'][index];
  if(s.phase<=3)s.tickets=null;
@@ -736,7 +750,7 @@ document.addEventListener('click',e=>{
  const act=plannedArtist(d.book),group=act[6];if(isBooked(d.book))return;
  if(actsBooked().filter(a=>(a[6]==='headline')===(group==='headline')).length>=(group==='headline'?1:7)){b.insertAdjacentHTML('afterend','<p class="warn">This line-up is full. Cancel an existing booking to replace it.</p>');return;}
   const offer=s.offers[d.book];if(!offer?.accepted)return;
-  if(offer.bid+(plannedArtist(d.book)[5]>=2?55000:0)>available()-75000){b.insertAdjacentHTML('afterend','<span class="warn">Insufficient booking cash. Keep at least ฿75,000 for later costs.</span>');return;}
+  if(offer.bid+(plannedArtist(d.book)[5]>=2?55000:0)>available()-75000){b.insertAdjacentHTML('afterend','<span class="warn">Insufficient booking cash. Borrow at the budget desk, negotiate a lower fee, or choose a different act. Keep ฿75,000 for later costs.</span>');return;}
   s.booked[d.book]=offer.bid;
  }else if(d.release){
   if(!window.confirm('Cancel and pay 20% of the bid as a cancellation fee?'))return;
