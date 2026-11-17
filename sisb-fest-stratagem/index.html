@@ -213,14 +213,30 @@ const shows={
 };
 if(safeLegacyProgramme())shows.rock=['Secondary school bands',18000,205,0,'main'];
 function safeLegacyProgramme(){try{const saved=JSON.parse(localStorage.getItem('sisb-fest-v1'));return saved?.phase>=5&&saved.schedule?.rock;}catch{return false;}}
+// Each entry specifies booth spaces, rent paid to SISB, servings per session and ticket appeal.
 const stalls={
- thai:['Thai street food',4,52000,520,120,'food'],
- halal:['Halal meals',2,29000,275,70,'food'],
- veg:['Vegetarian and allergy-aware meals',2,23500,225,75,'food'],
- snacks:['Desserts and snacks',2,25000,245,45,'food'],
- merch:['Student merchandise',2,33000,0,85,'market'],
- clubs:['Club games and crafts',3,24000,0,125,'market'],
- community:['Community maker stalls',2,26000,0,80,'market']
+ thai:['Chicken pad Thai & grilled pork skewers',4,52000,520,120,'food'],
+ halal:['Halal chicken biryani & beef satay',2,29000,275,70,'food'],
+ veg:['Tofu pad kra pao & vegetable spring rolls',2,23500,225,75,'food'],
+ snacks:['Mango sticky rice & coconut ice cream',2,25000,245,45,'food'],
+ merch:['Student-designed tote bags & enamel pins',2,33000,0,85,'market'],
+ clubs:['Ring toss & beanbag target throw',3,24000,0,125,'market'],
+ community:['Custom bead bracelets & rubber-stamp postcards',2,26000,0,80,'market'],
+ basil:['Pad kra pao chicken with fried egg',1,14500,155,48,'food'],
+ moo:['Moo ping pork skewers with sticky rice',1,12500,150,44,'food'],
+ noodles:['Boat noodles with beef & morning glory',2,23500,245,70,'food'],
+ somtam:['Som tam, grilled chicken & sticky rice',2,26000,235,84,'food'],
+ katsu:['Chicken katsu curry rice bowls',2,26500,230,82,'food'],
+ tteok:['Tteokbokki & crispy seaweed rolls',1,15500,135,75,'food'],
+ tacos:['Chicken tacos & black-bean tacos',2,24000,200,73,'food'],
+ bao:['Teriyaki chicken bao & mushroom bao',1,14000,145,56,'food'],
+ roti:['Banana roti with condensed milk',1,11500,160,51,'food'],
+ boba:['Thai milk tea & brown-sugar boba',1,17500,200,89,'food'],
+ fruit:['Watermelon slush & pineapple cups',1,10000,170,39,'food'],
+ hoops:['Basketball shootout · score three baskets in 30 seconds',1,14000,0,80,'market'],
+ darts:['Magnetic darts · hit three marked targets',1,10000,0,48,'market'],
+ football:['Football accuracy · shoot through numbered targets',2,17500,0,95,'market'],
+ tower:['Giant block tower · pull a block without toppling it',1,9000,0,42,'market']
 };
 const sponsors={
  milo:['MILO chocolate drinks booth',155000,2,110,'market','Needs a staffed market and 2,200 attendees. Uses two booth spaces.'],
@@ -391,7 +407,7 @@ function vendor(){
  const over=Object.keys(zoneCaps).some(z=>used(z)>zoneCaps[z]);
  const bad=over||sponsorClash()||active('sponsors').some(k=>!sponsorPitch(k)[0]);
  return phaseTitle('Build the market and food court')+'<p>Choose operators and set menu prices. The festival keeps stall rent plus 15% of food sales. Sponsor offers depend on your programme and stalls. Sign for a 35% deposit and earn the balance by meeting the contract.</p>'+
- '<div class="ok">Food court '+used('food')+'/12 booth spaces · Market '+used('market')+'/9 booth spaces</div><div class="grid">'+entries(stalls).map(([k,[name,spots,fee,meals,,zone]])=>card(name,zone+' · '+spots+' spaces · '+money(fee)+' rent'+(meals?' · '+num(meals)+' meals per session':''),toggle('stalls',k,'Reserve spaces'))).join('')+'</div><h3>Food pricing</h3><div class="grid">'+entries(concessionPlans).map(([k,[name,price,,cost]])=>card(name,money(price)+' average meal'+(cost?' · '+money(cost)+' school subsidy':'')+' · '+(k==='value'?'More students can afford to eat.':k==='premium'?'Higher spending per buyer but fewer buyers.':'Normal demand and spending.'),'<button data-concession="'+k+'" class="'+(s.concession===k?'selected':'')+'" aria-pressed="'+(s.concession===k)+'">Choose '+name.toLowerCase()+'</button>')).join('')+'</div><h3>Sponsor contracts</h3><div class="grid">'+entries(sponsors).map(([k,[name,fee,spots,,zone,terms]])=>{
+ '<div class="ok">Food court '+used('food')+'/12 booth spaces · Market '+used('market')+'/9 booth spaces</div><div class="grid">'+entries(stalls).map(([k,[name,spots,fee,meals,appeal,zone]])=>card(name,zone+' · '+spots+' spaces · '+money(fee)+' rent'+(meals?' · '+num(meals)+' servings per session':'')+' · +'+appeal+' ticket appeal',toggle('stalls',k,'Reserve spaces'))).join('')+'</div><h3>Food pricing</h3><div class="grid">'+entries(concessionPlans).map(([k,[name,price,,cost]])=>card(name,money(price)+' average meal'+(cost?' · '+money(cost)+' school subsidy':'')+' · '+(k==='value'?'More students can afford to eat.':k==='premium'?'Higher spending per buyer but fewer buyers.':'Normal demand and spending.'),'<button data-concession="'+k+'" class="'+(s.concession===k?'selected':'')+'" aria-pressed="'+(s.concession===k)+'">Choose '+name.toLowerCase()+'</button>')).join('')+'</div><h3>Sponsor contracts</h3><div class="grid">'+entries(sponsors).map(([k,[name,fee,spots,,zone,terms]])=>{
   const [eligible,reason]=sponsorPitch(k);
   return card(name,money(fee)+' base · '+spots+' '+zone+' spaces<br>'+terms+'<br><strong>'+(eligible?'Offer available':'To unlock: '+reason)+'</strong>',eligible||s.sponsors[k]?toggle('sponsors',k,'Sign contract'):'<button disabled>Offer locked</button>');
  }).join('')+'</div>'+(bad?'<p class="warn">'+(over?'Free up booth space. ':'')+(sponsorClash()?'MILO and Ichitan cannot both be your paid drinks sponsor. ':'')+(active('sponsors').some(k=>!sponsorPitch(k)[0])?'Remove or qualify for locked contracts.':'')+'</p>':'')+phaseNav('Lock stalls and sponsors',bad);
@@ -663,11 +679,11 @@ document.addEventListener('click',e=>{
 });
 // The map is a simulation layout. Coordinates are normalised for tablet and desktop.
 const mapPositions = {
- thai:[.25,.37],halal:[.35,.37],veg:[.45,.37],snacks:[.55,.37],water:[.65,.37],afteryou:[.75,.37],
+ thai:[.22,.32],halal:[.31,.32],veg:[.40,.32],snacks:[.49,.32],water:[.58,.32],afteryou:[.67,.32],
  merch:[.37,.59],clubs:[.47,.59],community:[.57,.59],telco:[.67,.59],bank:[.77,.59],
  milo:[.37,.72],ichitan:[.47,.72],tao:[.57,.72],ais:[.67,.72]
 };
-const plotZones={food:[.22,.78,.35,.39],market:[.34,.79,.57,.73]};
+const plotZones={food:[.22,.78,.30,.43],market:[.34,.79,.57,.73]};
 // Older saves keep their budgets and bookings, but adopt the corrected campus layout.
 if(s.mapLayout!==2){s.placements={};s.mapLayout=2;}
 const mapPalette=['#ffb570','#f2ce6c','#83d5bc','#bda3ff','#87bcf1','#ed9cb7'];
@@ -680,7 +696,23 @@ s.placements=s.placements||{};
 function placedItems(){
  return [...active('stalls').map(k=>({key:k,type:'stalls',name:stalls[k][0],zone:stalls[k][5]})),...active('sponsors').map(k=>({key:k,type:'sponsors',name:sponsors[k][0],zone:sponsors[k][4]}))];
 }
-function coords(item){return s.placements[item.key]||mapPositions[item.key];}
+function coords(item){
+ const assigned=new Map();
+ const items=placedItems();
+ for(const entry of items){
+  const position=s.placements[entry.key]||mapPositions[entry.key];
+  if(position)assigned.set(entry.key,position);
+ }
+ const rows=item.zone==='food'?[.32,.43]:[.59,.72];
+ const columns=item.zone==='food'?[.22,.31,.40,.49,.58,.67,.76]:[.37,.47,.57,.67,.77];
+ const candidates=rows.flatMap(y=>columns.map(x=>[x,y]));
+ for(const entry of items){
+  if(entry.zone!==item.zone||assigned.has(entry.key))continue;
+  const free=candidates.find(([x,y])=>![...assigned.values()].some(([a,b])=>Math.abs(x-a)<.078&&Math.abs(y-b)<.102));
+  assigned.set(entry.key,free||candidates[0]);
+ }
+ return assigned.get(item.key);
+}
 function mapShell(){
  const root=document.createElement('section');
  root.id='festival-world';
@@ -766,9 +798,9 @@ function drawWorld(){
  building(.41,.07,.36,.20,'SPORTS COMPLEX','');
  pool(.84,.09,.13,.17,'Primary');
  // Larger playable zones directly below the sports buildings.
- rect(.20,.29,.61,.17,'#e9dfb1',12);
+ rect(.17,.27,.65,.19,'#e9dfb1',12);
  rect(.325,.54,.50,.28,'#c9dfb6',12);
- text('FOOD & DRINK BOOTHS',.50,.315,11);
+ text('FOOD & DRINK BOOTHS',.50,.285,11);
  text('STUDENT MARKET + SPONSORS',.58,.558,10);
  // Main stage faces the audience on the west side, as on the school map.
  rect(.025,.59,.225,.32,'#86bb9a',9);
