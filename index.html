@@ -56,6 +56,14 @@ dialog{background:#f9f4ff;color:#2d2544;box-shadow:0 20px 80px #0008}footer{colo
 .records .table-scroll{max-height:270px}
 .records thead th{position:sticky;top:0;z-index:1}
 .records tbody tr:first-child td{background:#fff1c3;font-weight:900}
+/* Six stats share one row on desktop and two rows of three on smaller screens. */
+.metrics{grid-template-columns:repeat(2,minmax(0,1.32fr)) repeat(4,minmax(0,1fr));gap:8px}
+.metrics .metric{min-width:0;padding:9px 10px;font-size:14px;line-height:1.25}
+.metrics .metric strong{margin-top:4px;font-size:22px;line-height:1.1;font-variant-numeric:tabular-nums}
+.metrics .balance-tile{grid-column:auto}
+.metrics .balance-tile strong{font-size:clamp(17px,2.8vw,30px)}
+@media(max-width:780px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:370px){.metrics{gap:5px}.metrics .metric{padding:7px 4px;font-size:11px}}
 </style>
 <header><strong class="logo">🪙 PAYDAY!</strong><div class="row"><button id="home">Home</button><button id="teacher">Teacher guide</button></div></header>
 <main id="app"></main><footer>Bangkok Budget Challenge · Fictional characters · All amounts in Thai baht</footer>
