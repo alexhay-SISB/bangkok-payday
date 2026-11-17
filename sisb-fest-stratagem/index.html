@@ -158,6 +158,44 @@ details>summary{list-style:none;margin:20px 0 12px}details>summary::-webkit-deta
 #festival-world{box-shadow:0 12px 35px #0005}.world-top,.world-bottom{color:#294e45}
 @media(max-width:700px){.rail{display:grid;grid-template-columns:repeat(3,1fr)}.rail button{font-size:11px;padding:8px;gap:5px}.rail button b{width:22px;height:22px}.panel{padding:14px}}
 </style>
+
+<style>
+:root{color-scheme:dark;--ink:#fff7ea;--muted:#bfb5d9;--line:#5d467d}
+body{background:radial-gradient(ellipse at top left,#523880 0,transparent 45%),radial-gradient(ellipse at bottom right,#643151,transparent 50%),#171329;color:#fff7ea}
+.shell{max-width:1600px;width:95%}
+.mast{background:#181126e8;backdrop-filter:blur(16px);border-bottom:2px solid #8260b7}.mast .shell{min-height:86px}.mast h1{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(22px,3vw,38px);letter-spacing:-1.5px;color:#ffdd93}
+.mark{background:#fe837f;width:28px;height:34px;transform:rotate(-12deg);border-radius:8px;box-shadow:7px 3px #cbb4ff}
+main.shell{display:grid;grid-template-columns:minmax(300px,.75fr) minmax(580px,1.65fr);gap:22px;align-items:start;padding-top:24px}
+.kpis{grid-column:1/-1;grid-row:1;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;border:0;background:none;overflow:visible;margin:0}
+.kpi{background:#2b2242;border:1px solid #785a9a;border-radius:18px;padding:15px 20px;box-shadow:0 6px #100c1e}
+.kpi:first-child{background:#ffdc8d;color:#563719}.kpi:first-child strong{color:#362643}.kpi strong{font-family:'Bricolage Grotesque';font-size:30px}.kpi small{font-size:12px;letter-spacing:.03em}
+#festival-world{grid-column:1;grid-row:2;position:sticky;top:18px;border:2px solid #b695de;border-radius:24px;box-shadow:0 10px #100c1e;overflow:hidden}
+.world-top{background:#f2dfc8;display:block;padding:20px}.world-top strong{font-family:'Bricolage Grotesque';font-size:30px}.world-actions{margin-top:15px}.world-actions button{background:#fff6e6}
+#festival-canvas{height:440px}.world-tip{top:auto;bottom:6px;left:6px;font-size:10px}.world-bottom{background:#f2dfc8}.plot-panel:not(:empty){top:10px;width:195px;color:#234c43}
+.workbench{grid-column:2;grid-row:2;display:block;min-width:0}
+.rail{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.rail button{background:#332447;border-color:#72568c;box-shadow:0 4px #100c1e;border-radius:13px;min-height:56px;padding:9px;font-size:12px}.rail button b{background:#50366c;color:#ecd9ff;border-radius:50%;flex-shrink:0}
+.rail button.on{background:#ff988e;border-color:#ffb7a8;color:#38213f;box-shadow:0 4px #a94d70}.rail button.on b{background:#ffe3b5;color:#41244f}
+.panel{background:#241c35;border:1px solid #6c508c;border-radius:24px;padding:24px;box-shadow:0 9px #100c1e}
+.panel h2{font-family:'Bricolage Grotesque';font-size:clamp(28px,3vw,44px);letter-spacing:-1.4px;line-height:1.05;color:#ffe2b2}.panel>p{font-size:14px;line-height:1.6}
+.grid,[data-phase="0"] .panel .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card,[data-phase="0"] .card{padding:0 17px 18px;gap:11px;border:1px solid #8161a4!important;border-top:0!important;border-radius:19px;overflow:hidden;background:#38284f;box-shadow:0 6px #140e22}
+.card-art{display:block;width:calc(100% + 34px);height:130px;object-fit:cover;margin:0 -17px 3px;background:#49316c}
+.card:nth-child(3n+2){background:#293a50}.card:nth-child(3n){background:#4a2f42}
+.card h3{font-family:'Bricolage Grotesque';font-size:24px;line-height:1.1;color:#fff2d8;letter-spacing:-.6px}.card p{font-size:13px;color:#d9cfe6;margin:0}
+.card button{margin-top:auto;background:#ffd28a;color:#422c42;border:1px solid #ffe9b5;box-shadow:0 4px #ba8059;font-size:13px}
+.card:has(.selected),.card:has([data-release]){outline:3px solid #a9e7b4;outline-offset:1px}.selected{background:#a9e7b4!important}
+input,select{background:#1b142c;border:1px solid #8b71a1;color:#fff1d4;font-size:14px}
+.sticky{background:#31213ded;border:1px solid #8d6a9c;border-radius:16px;backdrop-filter:blur(12px)}button.primary{background:#ff978e;border-color:#ffcab1;color:#3b2342;font-size:16px;padding:13px 22px}
+.table{background:#f8eeda;color:#392c49}.table th{background:#dbc2ef;color:#36254d}.table td{border-color:#cbb6d8}
+.ok,.check{background:#b9e8c6;color:#254634;border-radius:13px;padding:14px}.warn{background:#ffcd9a;color:#613646}.incident{background:#583657;border:1px solid #e19b9f;border-radius:18px}
+@keyframes cardEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:cardEnter .3s ease both}.card:nth-child(2n){animation-delay:.04s}
+@media(min-width:1500px){.grid,[data-phase="0"] .panel .grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1000px){main.shell{display:block}.kpis{margin-bottom:18px}#festival-world{position:relative;top:0;margin-bottom:22px}#festival-canvas{height:440px}.world-top{display:flex}.world-actions{margin:0}.rail{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.shell{width:94%}.mast .shell{min-height:70px}.kpis{grid-template-columns:repeat(2,1fr)}.kpi strong{font-size:25px}.grid,[data-phase="0"] .panel .grid{grid-template-columns:1fr}.panel{padding:16px}.rail button{font-size:10px}.world-top{display:block}.world-actions{margin-top:10px}.card-art{height:155px}}
+@media(prefers-reduced-motion:reduce){.card{animation:none;transition:none}}
+</style>
 </head>
 <body>
 <header class="mast"><div class="shell"><div class="wordmark"><span class="mark" aria-hidden="true"></span><h1>SISB Fest Stratagem</h1></div><div class="tools"><button data-ui="map">Campus map</button><button data-ui="help">How to play</button><button data-ui="reset">Restart</button></div></div></header>
@@ -312,7 +350,7 @@ const plannedArtist=k=>acts.find(a=>a[0]===k);
 const phaseTitle=title=>'<h2>'+title+'</h2>';
 const toggle=(c,k,label)=>'<button class="'+(checked(c,k)?'selected':'')+'" aria-pressed="'+checked(c,k)+'" data-toggle="'+c+':'+k+'">'+(checked(c,k)?'✓ ':'')+label+'</button>';
 const table=(heads,rows)=>'<div class="table"><table><thead><tr>'+heads.map(x=>'<th scope="col">'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
-const card=(title,info,body)=>'<article class="card"><h3>'+title+'</h3><p>'+info+'</p>'+body+'</article>';
+const card=(title,info,body)=>'<article class="card"><canvas class="card-art" aria-hidden="true" data-art="'+title.replace(/"/g,'&quot;')+'"></canvas><h3>'+title+'</h3><p>'+info+'</p>'+body+'</article>';
 function cashLine(){return '<p class="muted">Base site hire, sanitation and cleaning '+money(venue)+' · Working cash '+money(available())+'</p>'}
 function phaseNav(label,disabled=false){return '<div class="sticky"><div class="actions"><button class="primary" id="next" '+(disabled?'disabled':'')+'>'+label+'</button>'+(s.phase>0?'<button data-back>Back to '+phases[s.phase-1]+'</button>':'')+'</div></div>'}
 function slotFor(key){return s.schedule[key]}
@@ -563,6 +601,39 @@ function render(){
  return '<button data-nav="'+index+'" class="'+(current?'on':'')+'" '+(s.phase>=5?'disabled':'')+'><b>'+(index+1)+'</b>'+title+'</button>';
 }).join('')+'</nav><section id="build-drawer" class="panel">'+screens[s.phase]()+'</section></div>';
  mapShell();
+ paintCardArt();
+}
+function paintCardArt(){
+ document.querySelectorAll('.card-art').forEach((canvas,index)=>{
+  canvas.width=600;canvas.height=240;
+  const c=canvas.getContext('2d'),title=canvas.dataset.art.toLowerCase();
+  const hue=(index*47+260)%360;
+  const gradient=c.createLinearGradient(0,0,600,240);
+  gradient.addColorStop(0,'hsl('+hue+' 65% 33%)');gradient.addColorStop(1,'hsl('+(hue+65)+' 75% 14%)');
+  c.fillStyle=gradient;c.fillRect(0,0,600,240);
+  c.fillStyle='#ffffff12';
+  for(let i=0;i<5;i++){c.beginPath();c.moveTo(80+i*120,0);c.lineTo(-150+i*160,240);c.lineTo(120+i*160,240);c.closePath();c.fill();}
+  const food=/rice|noodles|chicken|pork|tofu|taco|roti|boba|fruit|milk|dessert|tea|bao|tteok|slush|satay|ice cream/.test(title);
+  const game=/basket|darts|football|tower|ring toss|beanbag|game|quiz/.test(title);
+  if(food){
+   c.fillStyle='#fff0c9';c.beginPath();c.ellipse(300,167,128,46,0,0,7);c.fill();
+   c.fillStyle='#f99c59';c.beginPath();c.ellipse(300,146,100,43,0,0,7);c.fill();
+   for(let i=0;i<17;i++){c.fillStyle=['#ffd878','#7fce87','#e65e53'][i%3];c.beginPath();c.ellipse(224+(i*39)%155,126+(i*17)%43,12,5,i,0,7);c.fill();}
+   c.strokeStyle='#ffeac8';c.lineWidth=4;for(let i=0;i<3;i++){c.beginPath();c.moveTo(265+i*35,90);c.bezierCurveTo(245+i*35,65,290+i*35,55,270+i*35,30);c.stroke();}
+  }else if(game){
+   for(let i=4;i>0;i--){c.fillStyle=i%2?'#ffe4ac':'#f26979';c.beginPath();c.arc(300,116,i*24,0,7);c.fill();}
+   c.fillStyle='#faf4dd';c.fillRect(296,12,8,208);c.fillRect(196,112,208,8);
+   c.fillStyle='#14263d';c.beginPath();c.arc(300,116,13,0,7);c.fill();
+  }else{
+   c.fillStyle='#11172e';c.fillRect(60,183,480,24);
+   for(const x of [65,470]){c.fillStyle='#202942';c.fillRect(x,92,65,90);for(const y of [115,155]){c.fillStyle='#0b1226';c.beginPath();c.arc(x+32,y,19,0,7);c.fill();c.strokeStyle='#b08bff';c.lineWidth=2;c.stroke();}}
+   c.save();c.translate(295,120);c.rotate(.32);
+   c.fillStyle='#ffb780';c.beginPath();c.ellipse(0,25,36,46,0,0,7);c.fill();c.fillStyle='#e86f7b';c.beginPath();c.ellipse(0,-5,29,29,0,0,7);c.fill();
+   c.fillStyle='#ffe4b0';c.fillRect(-7,-90,14,112);c.fillStyle='#18233e';c.beginPath();c.arc(0,21,12,0,7);c.fill();c.restore();
+   c.fillStyle='#fff4d0';for(let i=0;i<12;i++){c.beginPath();c.arc(90+i*38,38,4,0,7);c.fill();}
+   c.fillStyle='#0b1429';for(let i=0;i<23;i++){c.beginPath();c.arc(i*28,238-(i%4)*5,13,0,7);c.fill();}
+  }
+ });
 }
 function refresh(up=false){s.placements=s.placements||{};save();render();if(up)window.scrollTo(0,0)}
 function next(){
@@ -805,6 +876,10 @@ function drawWorld(){
  // Main stage faces the audience on the west side, as on the school map.
  rect(.025,.59,.225,.32,'#86bb9a',9);
  rect(.035,.61,.052,.27,'#355369',5);
+ for(let beam=0;beam<3;beam++){
+ c.fillStyle='rgba(255,225,150,'+(0.10+Math.sin(mapTime+beam)*.04)+')';
+ c.beginPath();c.moveTo(x(.087),y(.65+beam*.07));c.lineTo(x(.24),y(.60+beam*.07));c.lineTo(x(.24),y(.75+beam*.05));c.closePath();c.fill();
+}
  text('MAIN',.061,.72,10,'#fff');text('STAGE',.061,.75,10,'#fff');
  rect(.098,.61,.052,.27,'#e9c26b',4);text('VIP',.124,.76,10,'#57452a');
  rect(.16,.61,.078,.27,'#b8dfbf',4);text('AUDIENCE',.198,.76,9);
