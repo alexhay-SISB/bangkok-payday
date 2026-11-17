@@ -46,6 +46,16 @@ dialog{background:#f9f4ff;color:#2d2544;box-shadow:0 20px 80px #0008}footer{colo
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 @media(max-width:600px){.metrics{grid-template-columns:repeat(2,1fr)}.map{gap:6px}.map span{padding:4px 9px;font-size:13px}.option{font-size:18px}.hero p{font-size:18px}}
 
+
+.balance-tile{grid-column:span 2;border-width:2px;padding:16px 20px}
+.metrics .cash-tile{background:#ffdc78;color:#302145;border-color:#fff0b6}
+.metrics .savings-tile{background:#aaf0d0;color:#143f40;border-color:#defbed}
+.balance-tile strong{font-size:clamp(29px,5vw,43px);line-height:1.15}
+.records{margin:20px 0;padding:14px;border-radius:16px;border:2px solid #c7b8e6;background:#f2ecfc;color:#2c2544}
+.records h4{margin:0 0 8px;font-size:19px}
+.records .table-scroll{max-height:270px}
+.records thead th{position:sticky;top:0;z-index:1}
+.records tbody tr:first-child td{background:#fff1c3;font-weight:900}
 </style>
 <header><strong class="logo">🪙 PAYDAY!</strong><div class="row"><button id="home">Home</button><button id="teacher">Teacher guide</button></div></header>
 <main id="app"></main><footer>Bangkok Budget Challenge · Fictional characters · All amounts in Thai baht</footer>
@@ -519,20 +529,20 @@ function home(){
 }
 function metrics(p){
   const pct=Math.round(clamp(s.savings/annualGoal(p)*100,100));
-  return '<div class="metrics"><div class="metric">Bank cash<strong>'+fmt(s.cash)+'</strong></div><div class="metric">Goal savings<strong>'+fmt(s.savings)+'</strong></div>'+stats.map((name,i)=>'<div class="metric">'+icons[i]+' '+name+'<strong>'+signed(s.points[i])+'</strong></div>').join('')+'</div><div class="bar" role="progressbar" aria-label="Savings goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><div style="width:'+pct+'%"></div></div><p class="muted">Save '+fmt(annualGoal(p))+' for '+p.target+' · '+pct+'% funded · Lower stress is better.</p>';
+  return '<div class="metrics"><div class="metric balance-tile cash-tile">Bank cash<strong>'+fmt(s.cash)+'</strong></div><div class="metric balance-tile savings-tile">Goal savings<strong>'+fmt(s.savings)+'</strong></div>'+stats.map((name,i)=>'<div class="metric">'+icons[i]+' '+name+'<strong>'+signed(s.points[i])+'</strong></div>').join('')+'</div><div class="bar" role="progressbar" aria-label="Savings goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><div style="width:'+pct+'%"></div></div><p class="muted">Save '+fmt(annualGoal(p))+' for '+p.target+' · '+pct+'% funded · Lower stress is better.</p>';
 }
 function statement(entries){
   return table(['Month','Item','Change','Bank cash'],entries.map(l=>[months[l.month-1],l.label,change(l.amount),fmt(l.balance)]));
 }
 function loanTable(){
   if(!s.loans.length)return '';
-  return '<details class="actions"><summary>Loan balances</summary>'+table(['Loan','Rate type','Annual rate','Balance','Next payment estimate'],s.loans.map(l=>[l.name,l.variable?'Variable':'Fixed',l.rate.toFixed(2)+'%',fmt(l.balance),fmt(billed(l))]))+'</details>';
+  return '<section class="records actions"><h4>Loan balances</h4>'+table(['Loan','Rate type','Annual rate','Balance','Next payment estimate'],s.loans.map(l=>[l.name,l.variable?'Variable':'Fixed',l.rate.toFixed(2)+'%',fmt(l.balance),fmt(billed(l))]))+'</section>';
 }
 function scoreboard(){
-  const rows=s.decisions.map(d=>[months[d.month-1]+' · '+d.label,change(d.cash),...d.points.map(signed)]);
-  rows.push(['Total','',...s.points.map(signed)]);
-  const byMonth=s.history.map(h=>[months[h.month-1],fmt(h.cash),fmt(h.savings),...h.points.map(signed)]);
-  return '<details class="actions" '+(s.stage==='end'?'open':'')+'><summary>Score table by month</summary>'+table(['Month','Bank cash','Savings',...stats],byMonth,'score')+'</details><details class="actions"><summary>Every decision and its points</summary>'+table(['Decision','Cash',...stats],rows,'score')+'</details>';
+  const rows=s.decisions.slice().reverse().map(d=>[months[d.month-1]+' · '+d.label,change(d.cash),...d.points.map(signed)]);
+  rows.unshift(['Total','',...s.points.map(signed)]);
+  const byMonth=s.history.slice().reverse().map(h=>[months[h.month-1],fmt(h.cash),fmt(h.savings),...h.points.map(signed)]);
+  return '<section class="records actions"><h4>Score table by month</h4>'+table(['Month','Bank cash','Savings',...stats],byMonth,'score')+'</section><section class="records actions"><h4>Every decision and its points</h4>'+table(['Decision','Cash',...stats],rows,'score')+'</section>';
 }
 function funds(){
   return '<form id="funds" class="row actions"><label for="amount">Amount (฿)</label><input type="number" id="amount" name="amount" min="1" max="999999" required inputmode="numeric" placeholder="e.g. 1000"><button type="submit" value="save">Move to savings</button><button type="submit" value="take">Withdraw savings</button><span id="funds-error" role="status"></span></form>';
@@ -569,7 +579,7 @@ function game(){
     const score=clamp(Math.round(goal+life+buffer-penalty),100);
     body='<h3>🏁 Year complete</h3><div class="feedback"><b>'+score+'/100</b> · Savings '+goal+'/40 · Life points '+Math.round(life)+'/40 · Cash buffer '+buffer+'/20'+(penalty?' · Overdraft/shortfall −'+penalty:'')+'</div><p>Year-end cash <b>'+fmt(s.cash)+'</b>. Bills from December choices due next month <b>'+fmt(-s.later)+'</b>. Overdraft months <b>'+s.overdraftMonths+'</b>.</p><p>Compare two teams’ savings and stress. Which choice explains the biggest difference?</p>'+button('Choose another character','home');
   }
-  return profile+metrics(p)+map+'<section class="panel" aria-label="Current round">'+(s.cash<0?'<div class="feedback alert"><b>Overdraft: '+fmt(-s.cash)+'</b>. Ending a month below zero adds stress and triggers interest next payday.</div>':'')+body+(s.month?loanTable()+scoreboard()+'<details class="actions"><summary>Full bank statement</summary>'+statement(s.ledger)+'</details>':'')+'</section>';
+  return profile+metrics(p)+map+'<section class="panel" aria-label="Current round">'+(s.cash<0?'<div class="feedback alert"><b>Overdraft: '+fmt(-s.cash)+'</b>. Ending a month below zero adds stress and triggers interest next payday.</div>':'')+body+(s.month?loanTable()+scoreboard()+'<section class="records actions"><h4>Full bank statement</h4>'+statement(s.ledger.slice().reverse())+'</section>':'')+'</section>';
 }
 function render(scroll=false){
   app.innerHTML=view==='home'?home():game();
