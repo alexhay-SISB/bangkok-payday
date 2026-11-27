@@ -72,7 +72,23 @@ $('gallery-stage').addEventListener('touchstart', (event) => { touchStart = {x:e
 $('gallery-stage').addEventListener('touchend', (event) => { if (!touchStart) return; const x = event.changedTouches[0].clientX - touchStart.x; const y = event.changedTouches[0].clientY - touchStart.y; if (Math.abs(x) > 40 && Math.abs(x) > Math.abs(y)) showSlide(slideIndex + (x < 0 ? 1 : -1)); touchStart = null; }, {passive:true});
 
 const colourLines = {black:'Black? Classic. My ability to act normal? Less certain.',white:'White? Lovely. I shall try not to spill anything near you.',grey:'Grey? Understated. Unlike the effort I put into this invitation.',brown:'Brown? Warm, elegant, and very much my cup of tea.',gold:'Gold? Excellent. Now the skyline has some competition.'};
-document.querySelectorAll('.swatch').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('.swatch').forEach(b => b.setAttribute('aria-pressed', String(b === button))); $('colour-reply').textContent = colourLines[button.dataset.colour]; hearts(8); }));
+const dressColours = {
+  black: {fill:'#292528', outline:'#161418', detail:'#858084'},
+  white: {fill:'#fffdf7', outline:'#ad8b83', detail:'#cfaaa2'},
+  grey: {fill:'#a9a5a4', outline:'#676266', detail:'#737074'},
+  brown: {fill:'#8c6755', outline:'#634637', detail:'#674b3f'},
+  gold: {fill:'url(#dress-gold)', outline:'#967329', detail:'#99702c'}
+};
+document.querySelectorAll('.swatch').forEach(button => button.addEventListener('click', () => {
+  const colour = button.dataset.colour;
+  const dress = dressColours[colour];
+  document.querySelectorAll('.swatch').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+  $('dress-fabric').setAttribute('fill', dress.fill);
+  $('dress-fabric').setAttribute('stroke', dress.outline);
+  $('dress-details').setAttribute('stroke', dress.detail);
+  $('colour-reply').textContent = colourLines[colour];
+  hearts(8);
+}));
 
 const compliments = [
   'I picked a rooftop with a view. Then remembered I’d mostly be looking at you.',
